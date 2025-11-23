@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>ArcadeSMP Store</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Font Awesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+    <!-- PayPal JS SDK – HIER deine echte Client ID einsetzen -->
+    <!-- Live-Client-ID von https://developer.paypal.com holen -->
+    <script src="https://www.paypal.com/sdk/js?client-id=AT-u56fxEST-xbQEPGTvWoxTudBFCUlIQjLL78a3WtAcYyvsiutTmcGWODjWGulbhNkgyeXTgvH470Pu&currency=EUR"></script>
+
+    <style>
+        :root {
+            --bg-main: radial-gradient(circle at top, #111827 0%, #020617 45%, #000 100%);
+            --bg-card: radial-gradient(circle at top left, #1f2937 0%, #020617 70%);
+            --bg-soft: rgba(15, 23, 42, 0.9);
+            --bg-pill: rgba(31, 41, 55, 0.9);
+
+            --text-primary: #e5e7eb;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+
+            --accent: #6366f1;
+            --accent2: #a855f7;
+            --accent-soft: rgba(129, 140, 248, 0.2);
+
+            --border-soft: rgba(148, 163, 184, 0.3);
+            --shadow-heavy: 0 30px 80px rgba(15, 23, 42, 0.95);
+
+            --input-bg: rgba(15, 23, 42, 0.9);
+            --modal-overlay: rgba(0, 0, 0, 0.75);
+        }
+        [data-theme="light"] {
+            --bg-main: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            --bg-card: linear-gradient(145deg, #ffffff 0%, #e5e7eb 60%);
+            --bg-soft: rgba(255, 255, 255, 0.92);
+            --bg-pill: rgba(243, 244, 246, 0.9);
+
+            --text-primary: #020617;
+            --text-secondary: #4b5563;
+            --text-muted: #6b7280;
+
+            --accent: #4f46e5;
+            --accent2: #ec4899;
+            --accent-soft: rgba(129, 140, 248, 0.25);
+
+            --border-soft: rgba(148, 163, 184, 0.5);
+            --shadow-heavy: 0 20px 50px rgba(15, 23, 42, 0.25);
+
+            --input-bg: #ffffff;
+        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{
+            font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+            background:var(--bg-main);
+            color:var(--text-primary);
+            min-height:100vh;
+        }
+        .container{max-width:1180px;margin:0 auto;padding:0 20px}
+
+        /* NAVBAR */
+        .navbar{
+            position:fixed;top:0;left:0;right:0;
+            background:rgba(15,23,42,.92);
+            backdrop-filter:blur(18px);
+            border-bottom:1px solid var(--border-soft);
+            z-index:1000;
+        }
+        .nav-container{
+            max-width:1180px;margin:0 auto;padding:10px 20px;
+            display:flex;align-items:center;justify-content:space-between;
+        }
+        .nav-logo{display:flex;align-items:center;gap:10px}
+        .logo-dot{
+            width:18px;height:18px;border-radius:999px;
+            background:conic-gradient(from 160deg,#22c55e,#6366f1,#ec4899,#22c55e);
+            box-shadow:0 0 18px rgba(129,140,248,.8);
+        }
+        .nav-logo h1{font-size:1.1rem;letter-spacing:.08em;text-transform:uppercase}
+        .nav-menu{list-style:none;display:flex;align-items:center;gap:18px}
+        .nav-link{
+            color:var(--text-secondary);text-decoration:none;font-size:.9rem;
+            padding:7px 12px;border-radius:999px;transition:all .2s ease;
+        }
+        .nav-link:hover{background:rgba(15,23,42,.9);color:var(--text-primary)}
+        .cart-link{display:inline-flex;align-items:center;gap:6px}
+        .cart-count{
+            background:#f97316;color:#fff;border-radius:999px;padding:0 6px;
+            font-size:.7rem;
+        }
+        .theme-toggle{
+            width:38px;height:38px;border-radius:999px;border:1px solid var(--border-soft);
+            background:transparent;display:flex;align-items:center;justify-content:center;
+            cursor:pointer;color:var(--text-secondary);transition:all .2s ease;
+        }
+        .theme-toggle:hover{background:rgba(15,23,42,.9);transform:translateY(-1px)}
+
+        .main{padding-top:76px}
+
+        /* HERO */
+        .hero{padding:40px 0 10px}
+        .hero-inner{
+            display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1.2fr);
+            gap:32px;align-items:center;
+        }
+        .hero-pill{
+            display:inline-flex;align-items:center;gap:6px;
+            padding:5px 11px;border-radius:999px;background:var(--bg-pill);
+            border:1px solid rgba(148,163,184,.3);font-size:.75rem;color:var(--text-secondary);
+            margin-bottom:12px;
+        }
+        .hero-left h2{font-size:2.4rem;line-height:1.1;margin-bottom:10px}
+        .hero-left p{
+            color:var(--text-secondary);font-size:.95rem;max-width:420px;margin-bottom:16px;
+        }
+        .hero-buttons{display:flex;gap:10px;margin-bottom:18px}
+        .hero-sale{
+            display:flex;align-items:center;gap:10px;padding:8px 12px;
+            border-radius:12px;background:rgba(248,113,113,.08);
+            border:1px solid rgba(248,113,113,.4);font-size:.8rem;
+        }
+        .hero-sale-label{display:inline-flex;align-items:center;gap:5px;color:#f97316}
+        .hero-sale-text small{color:var(--text-muted);font-size:.75rem}
+        .hero-right{display:flex;flex-direction:column;gap:8px}
+
+        /* FEATURED CARD */
+        .featured-card{
+            position:relative;border-radius:18px;padding:18px 18px 16px;
+            background:
+                radial-gradient(circle at top left,rgba(129,140,248,.3),transparent 55%),
+                radial-gradient(circle at bottom right,rgba(56,189,248,.25),transparent 55%),
+                var(--bg-card);
+            box-shadow:var(--shadow-heavy);border:1px solid var(--border-soft);overflow:hidden;
+        }
+        .featured-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+        .featured-icon{
+            width:26px;height:26px;border-radius:999px;
+            background:rgba(129,140,248,.3);
+            display:flex;align-items:center;justify-content:center;
+        }
+        .featured-title{font-size:.95rem;font-weight:600}
+        .featured-desc{font-size:.85rem;color:var(--text-secondary);margin-bottom:16px}
+        .featured-glow{
+            position:absolute;left:50%;top:63%;transform:translateX(-50%);
+            width:72%;height:24px;
+            background:radial-gradient(circle,rgba(59,130,246,.7),transparent 70%);
+            opacity:.3;filter:blur(8px);
+        }
+        .featured-btn{
+            position:relative;width:100%;border-radius:999px;border:none;padding:10px 0;
+            background:linear-gradient(90deg,var(--accent),var(--accent2));
+            color:#f9fafb;font-weight:600;font-size:.9rem;cursor:pointer;
+            box-shadow:0 16px 40px rgba(59,130,246,.5);
+        }
+        .featured-tagline{font-size:.8rem;color:var(--text-muted);
+            display:flex;align-items:center;gap:6px}
+
+        /* BUTTONS */
+        .btn{
+            border-radius:999px;border:none;padding:9px 18px;font-size:.9rem;font-weight:600;
+            display:inline-flex;align-items:center;gap:7px;cursor:pointer;transition:all .2s ease;
+        }
+        .btn-primary{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#f9fafb}
+        .btn-primary:hover{transform:translateY(-1px);box-shadow:0 10px 30px rgba(59,130,246,.5)}
+        .btn-ghost{background:transparent;border:1px solid var(--border-soft);color:var(--text-secondary)}
+        .btn-ghost:hover{background:rgba(15,23,42,.9);color:var(--text-primary)}
+        .btn-success{background:linear-gradient(90deg,#22c55e,#16a34a);color:#fff}
+
+        /* FILTER */
+        .category-filter{padding:20px 0 6px}
+        .category-filter .container{
+            display:flex;justify-content:center;gap:8px;flex-wrap:wrap;
+        }
+        .filter-btn{
+            padding:7px 14px;border-radius:999px;border:1px solid var(--border-soft);
+            background:rgba(15,23,42,.8);color:var(--text-secondary);
+            font-size:.85rem;cursor:pointer;transition:all .15s ease;
+        }
+        .filter-btn.active,.filter-btn:hover{
+            background:var(--accent-soft);color:var(--text-primary);
+        }
+
+        /* PRODUCTS */
+        .products{padding:10px 0 50px}
+        .products-grid{
+            display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px;
+        }
+        .product-card{
+            padding:14px;border-radius:16px;background:var(--bg-card);
+            border:1px solid var(--border-soft);box-shadow:0 20px 40px rgba(15,23,42,.85);
+            cursor:pointer;transition:all .18s ease;
+        }
+        .product-card:hover{transform:translateY(-5px) scale(1.01);border-color:var(--accent-soft)}
+        .product-image{
+            width:100%;height:160px;border-radius:12px;
+            background:
+                radial-gradient(circle at top,rgba(148,163,184,.38),transparent 55%),
+                #020617;
+            position:relative;overflow:hidden;
+            display:flex;align-items:center;justify-content:center;
+        }
+        .product-image img{
+            width:100%;height:100%;object-fit:cover;border-radius:12px;
+        }
+        .product-image i{font-size:2.2rem;color:var(--text-muted);display:none}
+        .product-image.no-image{
+            background:
+                radial-gradient(circle at top,rgba(129,140,248,.4),transparent 60%),
+                linear-gradient(135deg,#020617,#020617);
+            border:1px dashed rgba(148,163,184,.6);
+        }
+        .product-image.no-image i{display:block}
+        .product-image.no-image::after{
+            content:"No Image";position:absolute;bottom:8px;left:50%;
+            transform:translateX(-50%);font-size:.7rem;letter-spacing:.16em;
+            text-transform:uppercase;color:var(--text-muted);
+        }
+        .product-info h3{margin-top:9px;margin-bottom:4px;font-size:.98rem}
+        .product-info p{font-size:.83rem;color:var(--text-secondary);margin-bottom:6px}
+        .product-features ul{list-style:none;font-size:.78rem;color:var(--text-muted);margin-bottom:5px}
+        .product-price{font-size:1.1rem;font-weight:700}
+
+        /* MODAL */
+        .modal{
+            display:none;position:fixed;inset:0;background:var(--modal-overlay);
+            backdrop-filter:blur(16px);z-index:2000;
+        }
+        .modal-content{
+            position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+            background:var(--bg-soft);border-radius:18px;border:1px solid var(--border-soft);
+            box-shadow:var(--shadow-heavy);width:95%;max-width:880px;max-height:88vh;
+            overflow-y:auto;padding:18px 20px 20px;
+        }
+        .close{
+            position:absolute;right:14px;top:10px;font-size:22px;cursor:pointer;color:var(--text-muted);
+        }
+        .modal-header{padding-bottom:10px;border-bottom:1px solid var(--border-soft);margin-bottom:10px}
+        .modal-header h3{font-size:1.05rem;display:flex;align-items:center;gap:7px}
+        .modal-body{display:flex;gap:18px;flex-wrap:wrap}
+        .modal-image-wrap{flex:1;min-width:260px}
+        .modal-body .product-image{height:210px}
+        .product-info{flex:1.1;min-width:260px}
+        .product-info h3{font-size:1.1rem;margin-top:0}
+        .price-row{margin-top:10px;margin-bottom:8px}
+        .price{font-size:1.4rem;font-weight:700}
+        .quantity-row{margin-bottom:10px;font-size:.85rem}
+        .quantity-controls{
+            display:inline-flex;align-items:center;gap:6px;margin-top:4px;
+        }
+        .quantity-controls button{
+            width:32px;height:32px;border-radius:999px;border:1px solid var(--border-soft);
+            background:rgba(15,23,42,.9);color:var(--text-primary);cursor:pointer;
+        }
+        .quantity-controls input{
+            width:55px;text-align:center;border-radius:10px;border:1px solid var(--border-soft);
+            background:var(--input-bg);color:var(--text-primary);
+        }
+
+        /* CART */
+        .cart-body{flex-direction:column}
+        #cart-items{max-height:260px;overflow-y:auto}
+        .cart-item{
+            display:flex;justify-content:space-between;align-items:center;
+            padding:8px 0;border-bottom:1px solid rgba(148,163,184,.3);font-size:.9rem;
+        }
+        .cart-item:last-child{border-bottom:none}
+        .cart-item-name{font-weight:500}
+        .cart-item-price{font-size:.8rem;color:var(--text-muted)}
+        .cart-item-quantity{font-size:.85rem}
+        .cart-item button{
+            border-radius:999px;border:none;padding:4px 8px;background:#ef4444;
+            color:#fff;cursor:pointer;font-size:.8rem;
+        }
+        .cart-summary{
+            margin-top:10px;padding-top:8px;border-top:1px solid var(--border-soft);
+            display:flex;align-items:center;justify-content:space-between;
+        }
+        .cart-total{font-weight:600}
+
+        /* CHECKOUT */
+        .checkout-body{flex-direction:column}
+        .checkout-form{max-width:420px;margin:0 auto;width:100%}
+        .form-group{margin-bottom:9px}
+        .form-group label{display:block;font-size:.8rem;margin-bottom:4px}
+        .form-group input,.form-group select{
+            width:100%;padding:7px 9px;border-radius:10px;border:1px solid var(--border-soft);
+            background:var(--input-bg);color:var(--text-primary);font-size:.85rem;
+        }
+        .order-summary{
+            margin:12px 0;padding:10px;border-radius:12px;border:1px solid var(--border-soft);
+            background:rgba(15,23,42,.9);
+        }
+        .summary-header{display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:7px}
+        #checkout-items{max-height:140px;overflow-y:auto;font-size:.83rem}
+        .checkout-item{display:flex;justify-content:space-between;padding:3px 0}
+        .paypal-button-container{margin:10px 0 8px}
+        .paypal-hint{
+            font-size:.78rem;border-radius:8px;border:1px solid rgba(34,197,94,.6);
+            background:rgba(22,163,74,.08);padding:7px 9px;margin-bottom:8px;
+            display:flex;align-items:center;gap:6px;
+        }
+
+        /* SUCCESS */
+        .success-body{flex-direction:column;gap:8px}
+        .success-main{font-size:.98rem;font-weight:600}
+        .success-sub{font-size:.85rem;color:var(--text-secondary)}
+        .order-details{
+            margin-top:8px;border-radius:12px;border:1px solid var(--border-soft);
+            padding:8px 10px;background:rgba(15,23,42,.9);font-size:.83rem;
+        }
+        .order-details p{display:flex;justify-content:space-between;padding:3px 0}
+        .success-support{margin-top:6px;font-size:.85rem;color:var(--text-secondary)}
+
+        /* LOADING */
+        .loading-overlay{
+            display:none;position:fixed;inset:0;background:var(--modal-overlay);
+            backdrop-filter:blur(6px);z-index:2200;align-items:center;justify-content:center;
+        }
+        .loading-overlay.show{display:flex}
+        .spinner{
+            width:40px;height:40px;border-radius:999px;
+            border:3px solid rgba(148,163,184,.3);border-top-color:#f9fafb;
+            animation:spin 1s linear infinite;margin:0 auto 6px;
+        }
+        .loading-content{text-align:center;font-size:.9rem}
+
+        /* NOTIFICATIONS */
+        .notification-container{
+            position:fixed;top:14px;right:14px;z-index:3000;
+            display:flex;flex-direction:column;gap:6px;
+        }
+        .notification{
+            background:rgba(15,23,42,.98);border-radius:10px;border:1px solid var(--border-soft);
+            padding:7px 10px;min-width:240px;max-width:300px;color:var(--text-primary);
+            font-size:.8rem;box-shadow:0 18px 40px rgba(15,23,42,.95);
+            transform:translateX(100%);opacity:0;transition:all .18s ease;
+        }
+        .notification.show{transform:translateX(0);opacity:1}
+        .notification.success{border-left:3px solid #22c55e}
+        .notification.error{border-left:3px solid #ef4444}
+        .notification.warning{border-left:3px solid #f97316}
+        .notification.info{border-left:3px solid #3b82f6}
+        .notification-header{
+            display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;
+        }
+        .notification-title{font-weight:600}
+        .notification-close{
+            border:none;background:transparent;color:var(--text-muted);cursor:pointer;
+        }
+
+        .hidden{display:none!important}
+        @keyframes spin{to{transform:rotate(360deg)}}
+
+        /* RESPONSIVE */
+        @media(max-width:900px){
+            .hero-inner{grid-template-columns:1fr}
+            .hero-right{order:-1}
+        }
+        @media(max-width:640px){
+            .nav-menu{gap:10px;font-size:.85rem}
+            .hero-left h2{font-size:1.9rem}
+            .products-grid{grid-template-columns:1fr}
+            .modal-content{max-width:94%;padding:14px}
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="nav-logo">
+            <span class="logo-dot"></span>
+            <h1>ArcadeSMP Store</h1>
+        </div>
+        <ul class="nav-menu">
+            <li><a href="#" class="nav-link" data-category="crates">Crates</a></li>
+            <li><a href="#" class="nav-link" data-category="ranks">Ranks</a></li>
+            <li><a href="#" class="nav-link" data-category="tools">Tools</a></li>
+            <li><a href="#" class="nav-link" data-category="coins">Coins</a></li>
+            <li>
+                <button class="theme-toggle" id="theme-toggle" title="Theme wechseln">
+                    <i id="theme-icon">☀️</i>
+                </button>
+            </li>
+            <li>
+                <a href="#" class="nav-link cart-link" id="cart-btn">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Cart</span>
+                    <span id="cart-count" class="cart-count">0</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<main class="main">
+    <section class="hero">
+        <div class="container hero-inner">
+            <div class="hero-left">
+                <div class="hero-pill">Official ArcadeSMP Shop</div>
+                <h2>Crates & Ränge<br>für dein SMP Abenteuer.</h2>
+                <p>Unterstütze den Server und hol dir exklusive Vorteile, OP-Gear und Ingame-Währung.</p>
+                <div class="hero-buttons">
+                    <button id="hero-crates-btn" class="btn btn-primary">
+                        <i class="fas fa-box-open"></i> Crates ansehen
+                    </button>
+                    <button id="hero-ranks-btn" class="btn btn-ghost">
+                        <i class="fas fa-crown"></i> Ränge ansehen
+                    </button>
+                </div>
+                <div class="hero-sale" id="hero-sale">
+                    <div class="hero-sale-label">
+                        <i class="fas fa-fire"></i> Summer Sale
+                    </div>
+                    <div class="hero-sale-text">
+                        <span>Bis zu 50% auf ausgewählte Crates.</span>
+                        <small id="hero-sale-countdown">Läuft...</small>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-right">
+                <div class="featured-card">
+                    <div class="featured-header">
+                        <div class="featured-icon"><i class="fas fa-box-open"></i></div>
+                        <span class="featured-title">Featured Crate</span>
+                    </div>
+                    <p class="featured-desc">
+                        Chance auf seltene Items, OP Gear und exklusive Belohnungen.
+                    </p>
+                    <div class="featured-glow"></div>
+                    <button id="featured-cta" class="featured-btn">Crates ansehen</button>
+                </div>
+                <div class="featured-tagline">
+                    <i class="fas fa-shield-heart"></i>
+                    Sicherer Checkout & schnelle Lieferung innerhalb 24h.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="category-filter">
+        <div class="container">
+            <button class="filter-btn active" data-filter="all">Alle</button>
+            <button class="filter-btn" data-filter="crates">Crates</button>
+            <button class="filter-btn" data-filter="ranks">Ranks</button>
+            <button class="filter-btn" data-filter="tools">Tools</button>
+            <button class="filter-btn" data-filter="coins">Coins</button>
+        </div>
+    </section>
+
+    <section class="products">
+        <div class="container">
+            <div id="products-grid" class="products-grid"></div>
+        </div>
+    </section>
+</main>
+
+<!-- Product Modal -->
+<div id="product-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <div class="modal-body">
+            <div class="modal-image-wrap">
+                <div class="product-image">
+                    <img id="modal-image" src="" alt="">
+                    <i class="fas fa-box-open"></i>
+                </div>
+            </div>
+            <div class="product-info">
+                <h3 id="modal-title"></h3>
+                <p id="modal-description"></p>
+                <div id="modal-features"></div>
+                <div class="price-row">
+                    <span class="price" id="modal-price"></span>
+                </div>
+                <div class="quantity-row">
+                    <label>Menge</label>
+                    <div class="quantity-controls">
+                        <button id="decrease-qty">-</button>
+                        <input id="quantity" type="number" value="1" min="1" max="99">
+                        <button id="increase-qty">+</button>
+                    </div>
+                </div>
+                <button id="add-to-cart-btn" class="btn btn-primary">
+                    <i class="fas fa-cart-plus"></i> In den Warenkorb
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cart Modal -->
+<div id="cart-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <div class="modal-header">
+            <h3><i class="fas fa-shopping-cart"></i> Warenkorb</h3>
+        </div>
+        <div class="modal-body cart-body">
+            <div id="cart-items"></div>
+            <div class="cart-summary">
+                <div class="cart-total">Gesamt: <span id="total-price">0.00€</span></div>
+                <button id="checkout-btn" class="btn btn-primary">
+                    <i class="fas fa-credit-card"></i> Zur Kasse
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Checkout Modal -->
+<div id="checkout-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <div class="modal-header">
+            <h3><i class="fas fa-credit-card"></i> Bestellung abschließen</h3>
+        </div>
+        <div class="modal-body checkout-body">
+            <div class="checkout-form">
+                <div class="form-group">
+                    <label for="minecraft-name">Minecraft Name</label>
+                    <input id="minecraft-name" type="text" placeholder="Dein Ingame Name">
+                </div>
+                <div class="form-group">
+                    <label for="discord-name">Discord Name</label>
+                    <input id="discord-name" type="text" placeholder="z.B. user#1234">
+                </div>
+                <div class="form-group">
+                    <label for="country">Land</label>
+                    <input id="country" type="text" placeholder="z.B. Germany">
+                </div>
+                <div class="form-group">
+                    <label for="payment-method">Zahlungsmethode</label>
+                    <select id="payment-method">
+                        <option value="">Bitte wählen</option>
+                        <option value="paypal">PayPal</option>
+                        <option value="amazon">Amazon Gift Card</option>
+                        <option value="google">Google Play Gift Card</option>
+                        <option value="paysafe">Paysafecard</option>
+                        <option value="steam">Steam Gift Card</option>
+                        <option value="apple">Apple Gift Card</option>
+                    </select>
+                </div>
+                <div id="paypal-hint" class="paypal-hint hidden">
+                    <i class="fab fa-paypal"></i>
+                    Du hast <strong>PayPal</strong> gewählt. Verwende den Button unten, um zu bezahlen.
+                </div>
+                <div class="form-group" id="payment-code-group">
+                    <label for="payment-code">Gift Card Code / PayPal Referenz (optional)</label>
+                    <input id="payment-code" type="text" placeholder="Für Gift Cards erforderlich, für PayPal optional">
+                </div>
+                <div class="order-summary">
+                    <div class="summary-header">
+                        <span>Bestellübersicht</span>
+                        <span id="checkout-total">0.00€</span>
+                    </div>
+                    <div id="checkout-items"></div>
+                </div>
+                <div id="paypal-button-container" class="paypal-button-container hidden"></div>
+                <button id="complete-order-btn" class="btn btn-success">
+                    <i class="fas fa-check"></i> Bestellung abschließen
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div id="success-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <div class="modal-header">
+            <h3><i class="fas fa-check-circle"></i> Bestellung erfolgreich</h3>
+        </div>
+        <div class="modal-body success-body">
+            <p class="success-main">Deine Bestellung wurde erfolgreich übermittelt.</p>
+            <p class="success-sub">Die Auslieferung erfolgt in der Regel innerhalb von <strong>24 Stunden</strong>.</p>
+            <div class="order-details">
+                <p><span>Bestellnummer</span><span id="order-number"></span></p>
+                <p><span>Minecraft Name</span><span id="success-minecraft-name"></span></p>
+                <p><span>Discord Name</span><span id="success-discord-name"></span></p>
+                <p><span>Land</span><span id="success-country"></span></p>
+                <p><span>Zahlungsmethode</span><span id="success-payment-method"></span></p>
+                <p><span>Zahlungsreferenz</span><span id="success-payment-code"></span></p>
+                <p><span>Zeitpunkt</span><span id="success-order-time"></span></p>
+                <div id="success-items-list"></div>
+                <p><span>Gesamt</span><span id="success-total-price"></span></p>
+            </div>
+            <p class="success-support">
+                Support: <strong id="support-discord-name">SIGMA</strong>
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Loading -->
+<div id="loading-overlay" class="loading-overlay">
+    <div class="loading-content">
+        <div class="spinner"></div>
+        <p>Bestellung wird verarbeitet...</p>
+    </div>
+</div>
+
+<div id="notification-container" class="notification-container"></div>
+
+<script>
+    // ---- Daten (ohne externe Dateien) ----
+    const shopData = {
+        shop: {
+            name: "ArcadeSMP Store",
+            supportDiscord: "SIGMA",
+            discordWebhook: "YOUR_DISCORD_WEBHOOK_URL_HERE", // optional
+            summerSale: {
+                enabled: true,
+                countdownEnd: "2025-09-15T23:59:59Z"
+            }
+        },
+        crates: [
+            { id: "rare_crate",   name: "SIGMA SIGMA Crate", price: 1.99, image: "", description: "Seltene Items & Belohnungen." },
+            { id: "nitro_crate",  name: "Nitro Crate",       price: 2.99, image: "", description: "Explosive Rewards & Boosts." },
+            { id: "spawner_crate",name: "Spawner Crate",     price: 4.99, image: "", description: "OP Spawner für deine Farm." },
+            { id: "arcade_crate", name: "Arcade Crate",      price: 6.99, image: "", description: "Arcade-Themed Loot Drop." },
+            { id: "ultra_crate",  name: "Ultra Crate",       price: 9.99, image: "", description: "Die seltensten Items im ganzen Server." }
+        ],
+        ranks: [
+            {
+                id: "premium",
+                name: "Premium",
+                price: 1.99,
+                image: "",
+                description: "Basic Premium Vorteile.",
+                features: ["Colored Chat", "Kit Premium", "2 Homes"]
+            },
+            {
+                id: "premium_plus",
+                name: "Premium+",
+                price: 3.99,
+                image: "",
+                description: "Erweiterte Vorteile.",
+                features: ["Alle Premium Vorteile", "Kit Premium+", "5 Homes", "Fly in Spawn"]
+            },
+            {
+                id: "premium_plus_plus",
+                name: "Premium++",
+                price: 5.99,
+                image: "",
+                description: "Maximum Premium Experience.",
+                features: ["Alle Premium+ Vorteile", "Kit Premium++", "10 Homes", "Workbench Command"]
+            },
+            {
+                id: "arcade_rank",
+                name: "Arcade Rank",
+                price: 7.99,
+                image: "",
+                description: "Der höchste ArcadeSMP Rank.",
+                features: ["Alle Premium++ Vorteile", "Kit Arcade", "Unlimited Homes", "Enderchest Command", "Nickname Command"]
+            }
+        ],
+        tools: [
+            { id: "drill",        name: "Drill",        price: 5.99, image: "", description: "OP Mining Drill." },
+            { id: "sell_axe",     name: "Sell Axe",     price: 7.99, image: "", description: "Axt zum Sofortverkauf." },
+            { id: "tree_chopper", name: "Tree Chopper", price: 3.99, image: "", description: "Fällt ganze Bäume auf einmal." }
+        ],
+        coins: [
+            { id: "coins_100",  name: "100 Coins",  price: 0.99, image: "", description: "Kleines Startpaket.", amount: 100 },
+            { id: "coins_500",  name: "500 Coins",  price: 4.99, image: "", description: "Beliebtes Paket.", amount: 500 },
+            { id: "coins_1000", name: "1000 Coins", price: 9.99, image: "", description: "Gutes Preis-Leistungs-Verhältnis.", amount: 1000 },
+            { id: "coins_2500", name: "2500 Coins", price: 19.99,image: "", description: "Großes Paket für aktive Spieler.", amount: 2500 },
+            { id: "coins_5000", name: "5000 Coins", price: 39.99,image: "", description: "Das ultimative Coin-Paket.", amount: 5000 }
+        ]
+    };
+
+    let cart = JSON.parse(localStorage.getItem("arcadesmp_cart_v2") || "[]");
+    let currentProduct = null;
+    let paypalButtonsInstance = null;
+    let countdownInterval = null;
+
+    const productsGrid   = document.getElementById("products-grid");
+    const cartCount      = document.getElementById("cart-count");
+    const productModal   = document.getElementById("product-modal");
+    const cartModal      = document.getElementById("cart-modal");
+    const checkoutModal  = document.getElementById("checkout-modal");
+    const successModal   = document.getElementById("success-modal");
+    const loadingOverlay = document.getElementById("loading-overlay");
+
+    function showNotification(title, message, type = "info", duration = 4000) {
+        const container = document.getElementById("notification-container");
+        const n = document.createElement("div");
+        const id = Date.now();
+        n.className = `notification ${type}`;
+        n.dataset.id = id;
+        n.innerHTML = `
+            <div class="notification-header">
+                <span class="notification-title">${getNotificationIcon(type)} ${title}</span>
+                <button class="notification-close" onclick="closeNotification(${id})">×</button>
+            </div>
+            <div class="notification-message">${message}</div>
+        `;
+        container.appendChild(n);
+        requestAnimationFrame(() => n.classList.add("show"));
+        setTimeout(() => closeNotification(id), duration);
+    }
+    function getNotificationIcon(type) {
+        const icons = { success: "✅", error: "❌", warning: "⚠️", info: "ℹ️" };
+        return icons[type] || icons.info;
+    }
+    function closeNotification(id) {
+        const n = document.querySelector(\`.notification[data-id="\${id}"]\`);
+        if (!n) return;
+        n.classList.remove("show");
+        setTimeout(() => n.remove(), 180);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        initTheme();
+        attachEvents();
+        displayProducts("all");
+        updateCartCount();
+        initSummerSaleCountdown();
+    });
+
+    function initTheme() {
+        const saved = localStorage.getItem("arcadesmp_theme") || "dark";
+        document.documentElement.setAttribute("data-theme", saved);
+        updateThemeIcon(saved);
+    }
+    function toggleTheme() {
+        const current = document.documentElement.getAttribute("data-theme") || "dark";
+        const next = current === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", next);
+        localStorage.setItem("arcadesmp_theme", next);
+        updateThemeIcon(next);
+    }
+    function updateThemeIcon(theme) {
+        const icon = document.getElementById("theme-icon");
+        icon.textContent = theme === "dark" ? "☀️" : "🌙";
+    }
+
+    function displayProducts(category) {
+        productsGrid.innerHTML = "";
+        const addType = (arr, type) => (arr || []).map(p => ({ ...p, type }));
+        let list = [];
+        if (category === "all" || category === "crates") list = list.concat(addType(shopData.crates, "crate"));
+        if (category === "all" || category === "ranks")  list = list.concat(addType(shopData.ranks, "rank"));
+        if (category === "all" || category === "tools")  list = list.concat(addType(shopData.tools, "tool"));
+        if (category === "all" || category === "coins")  list = list.concat(addType(shopData.coins, "coin"));
+        list.forEach(p => productsGrid.appendChild(createProductCard(p)));
+    }
+    function getProductIcon(type) {
+        switch (type) {
+            case "crate": return "fa-box-open";
+            case "rank":  return "fa-crown";
+            case "tool":  return "fa-tools";
+            case "coin":  return "fa-coins";
+            default:      return "fa-box";
+        }
+    }
+    function createProductCard(product) {
+        const card = document.createElement("div");
+        card.className = "product-card";
+        const iconClass = getProductIcon(product.type);
+        card.innerHTML = `
+            <div class="product-image">
+                <img src="${product.image || ""}" alt="${product.name}">
+                <i class="fas ${iconClass}"></i>
+            </div>
+            <div class="product-info">
+                <h3>${product.name}</h3>
+                <p>${product.description || ""}</p>
+                ${
+                    product.features
+                        ? `<div class="product-features"><ul>${
+                            product.features.slice(0, 3).map(f => `<li>${f}</li>`).join("")
+                          }${product.features.length > 3 ? "<li>...mehr</li>" : ""}</ul></div>`
+                        : ""
+                }
+                <div class="product-price">${product.price.toFixed(2)}€</div>
+            </div>
+        `;
+        const imgWrap = card.querySelector(".product-image");
+        const img = imgWrap.querySelector("img");
+        const icon = imgWrap.querySelector("i");
+        icon.style.display = "none";
+        if (!product.image) {
+            img.style.display = "none";
+            imgWrap.classList.add("no-image");
+            icon.style.display = "block";
+        } else {
+            img.onerror = () => {
+                img.style.display = "none";
+                imgWrap.classList.add("no-image");
+                icon.style.display = "block";
+            };
+        }
+        card.addEventListener("click", () => openProductModal(product));
+        return card;
+    }
+
+    function openProductModal(product) {
+        currentProduct = product;
+        const img = document.getElementById("modal-image");
+        const wrap = img.parentElement;
+        const icon = wrap.querySelector("i");
+        wrap.classList.remove("no-image");
+        icon.className = \`fas \${getProductIcon(product.type)}\`;
+        icon.style.display = "none";
+        img.style.display = "block";
+        if (!product.image) {
+            img.src = "";
+            img.style.display = "none";
+            wrap.classList.add("no-image");
+            icon.style.display = "block";
+        } else {
+            img.src = product.image;
+            img.alt = product.name;
+            img.onerror = () => {
+                img.style.display = "none";
+                wrap.classList.add("no-image");
+                icon.style.display = "block";
+            };
+        }
+        document.getElementById("modal-title").textContent = product.name;
+        document.getElementById("modal-description").textContent = product.description || "";
+        document.getElementById("modal-price").textContent = \`\${product.price.toFixed(2)}€\`;
+        const featuresDiv = document.getElementById("modal-features");
+        if (product.features && product.features.length) {
+            featuresDiv.innerHTML = `
+                <div class="product-features">
+                    <h4>Features</h4>
+                    <ul>${product.features.map(f => `<li>${f}</li>`).join("")}</ul>
+                </div>`;
+        } else {
+            featuresDiv.innerHTML = "";
+        }
+        document.getElementById("quantity").value = 1;
+        showModal(productModal);
+    }
+
+    function addToCart() {
+        if (!currentProduct) return;
+        const qty = Math.max(1, Math.min(99, parseInt(document.getElementById("quantity").value) || 1));
+        const existing = cart.find(i => i.id === currentProduct.id);
+        if (existing) existing.quantity += qty;
+        else cart.push({ id: currentProduct.id, name: currentProduct.name, price: currentProduct.price, type: currentProduct.type, quantity: qty });
+        saveCart();
+        updateCartCount();
+        hideModal(productModal);
+        showNotification("Hinzugefügt", \`\${currentProduct.name} wurde in den Warenkorb gelegt.\`, "success");
+    }
+    function saveCart(){localStorage.setItem("arcadesmp_cart_v2", JSON.stringify(cart));}
+    function updateCartCount(){cartCount.textContent = cart.reduce((s,i)=>s+i.quantity,0);}
+
+    function openCartModal() {
+        const cartItems = document.getElementById("cart-items");
+        const totalPrice = document.getElementById("total-price");
+        if (!cart.length) {
+            cartItems.innerHTML = `<p style="text-align:center;color:#9ca3af;font-size:.85rem;">Dein Warenkorb ist leer.</p>`;
+            totalPrice.textContent = "0.00€";
+        } else {
+            cartItems.innerHTML = cart.map(i => `
+                <div class="cart-item">
+                    <div>
+                        <div class="cart-item-name">${i.name}</div>
+                        <div class="cart-item-price">${i.price.toFixed(2)}€ / Stück</div>
+                    </div>
+                    <div class="cart-item-quantity">x${i.quantity}</div>
+                    <button onclick="removeFromCart('${i.id}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>`).join("");
+            const total = cart.reduce((s,i)=>s+i.price*i.quantity,0);
+            totalPrice.textContent = \`\${total.toFixed(2)}€\`;
+        }
+        showModal(cartModal);
+    }
+    function removeFromCart(id){
+        cart = cart.filter(i=>i.id!==id);
+        saveCart();updateCartCount();openCartModal();
+    }
+
+    function openCheckoutModal() {
+        if (!cart.length) {
+            showNotification("Warenkorb leer","Füge zuerst Produkte hinzu.","warning");
+            return;
+        }
+        const checkoutItems = document.getElementById("checkout-items");
+        const checkoutTotal = document.getElementById("checkout-total");
+        checkoutItems.innerHTML = cart.map(i => `
+            <div class="checkout-item">
+                <span>${i.name} x${i.quantity}</span>
+                <span>${(i.price*i.quantity).toFixed(2)}€</span>
+            </div>`).join("");
+        const total = cart.reduce((s,i)=>s+i.price*i.quantity,0);
+        checkoutTotal.textContent = \`\${total.toFixed(2)}€\`;
+
+        document.getElementById("payment-method").value = "";
+        document.getElementById("payment-code").value = "";
+        document.getElementById("paypal-hint").classList.add("hidden");
+        document.getElementById("paypal-button-container").classList.add("hidden");
+        document.getElementById("complete-order-btn").classList.remove("hidden");
+
+        showModal(checkoutModal);
+    }
+
+    function setupPaypalButtons() {
+        const container = document.getElementById("paypal-button-container");
+        if (!window.paypal || !container) {
+            showNotification("PayPal","PayPal SDK nicht geladen. Prüfe deine Client ID.","error");
+            return;
+        }
+        container.innerHTML = "";
+        const total = cart.reduce((s,i)=>s+i.price*i.quantity,0);
+        paypalButtonsInstance = paypal.Buttons({
+            style:{layout:"horizontal",color:"blue",shape:"pill",label:"paypal"},
+            createOrder(data, actions){
+                return actions.order.create({
+                    purchase_units:[{amount:{currency_code:"EUR",value:total.toFixed(2)}}]
+                });
+            },
+            onApprove(data, actions){
+                return actions.order.capture().then(details => {
+                    completeOrder(details);
+                });
+            },
+            onError(err){
+                console.error("PayPal error:", err);
+                showNotification("PayPal Fehler","Die Zahlung ist fehlgeschlagen. Bitte erneut versuchen.","error");
+            }
+        });
+        paypalButtonsInstance.render("#paypal-button-container");
+    }
+
+    async function completeOrder(paypalDetails = null) {
+        const mcName   = document.getElementById("minecraft-name").value.trim();
+        const dcName   = document.getElementById("discord-name").value.trim();
+        const country  = document.getElementById("country").value.trim();
+        const method   = document.getElementById("payment-method").value;
+        const codeIn   = document.getElementById("payment-code");
+        let   codeVal  = codeIn.value.trim();
+
+        if (!mcName)   return showNotification("Fehler","Bitte Minecraft-Namen eingeben.","error");
+        if (!dcName)   return showNotification("Fehler","Bitte Discord-Namen eingeben.","error");
+        if (!country)  return showNotification("Fehler","Bitte Land eingeben.","error");
+        if (!method)   return showNotification("Fehler","Bitte Zahlungsmethode wählen.","error");
+
+        if (method === "paypal" && !paypalDetails) {
+            showNotification("PayPal","Nutze den PayPal-Button, um die Zahlung zu starten.","info");
+            return;
+        }
+        if (method !== "paypal" && !codeVal) {
+            showNotification("Fehler","Bitte Gift Card Code eingeben.","error");
+            return;
+        }
+
+        const total = cart.reduce((s,i)=>s+i.price*i.quantity,0);
+        const paymentNames = {
+            paypal:"PayPal",
+            amazon:"Amazon Gift Card",
+            google:"Google Play Gift Card",
+            paysafe:"Paysafecard",
+            steam:"Steam Gift Card",
+            apple:"Apple Gift Card"
+        };
+
+        if (method === "paypal") {
+            if (paypalDetails && paypalDetails.id) {
+                codeVal = "PayPal ID: " + paypalDetails.id;
+            } else if (!codeVal) {
+                codeVal = "PayPal – Details im PayPal-Konto einsehbar";
+            }
+        }
+
+        hideModal(checkoutModal);
+        loadingOverlay.classList.add("show");
+
+        const orderData = {
+            orderNumber: generateOrderNumber(),
+            minecraftName: mcName,
+            discordName: dcName,
+            country,
+            paymentMethod: paymentNames[method] || method,
+            paymentCode: codeVal,
+            items: cart.slice(),
+            total: total.toFixed(2),
+            orderTime: new Date().toLocaleString(),
+            supportContact: shopData.shop.supportDiscord
+        };
+
+        await sendToDiscord(orderData);
+        setTimeout(()=>{
+            loadingOverlay.classList.remove("show");
+            showSuccessModal(orderData);
+            cart = [];saveCart();updateCartCount();
+        },800);
+    }
+
+    async function sendToDiscord(orderData) {
+        const webhook = shopData.shop.discordWebhook;
+        if (!webhook || webhook === "YOUR_DISCORD_WEBHOOK_URL_HERE") return;
+        const itemsList = orderData.items
+            .map(i => \`• \${i.name} x\${i.quantity} – \${(i.price*i.quantity).toFixed(2)}€\`)
+            .join("\\n");
+        const payload = {
+            embeds: [{
+                title: "Neue Bestellung – ArcadeSMP Store",
+                color: 0x22c55e,
+                fields: [
+                    { name: "Bestellnummer", value: orderData.orderNumber, inline: true },
+                    { name: "Zeit", value: orderData.orderTime, inline: true },
+                    { name: "Kunde", value: \`MC: \${orderData.minecraftName}\\nDiscord: \${orderData.discordName}\\nLand: \${orderData.country}\`, inline: false },
+                    { name: "Zahlung", value: \`\${orderData.paymentMethod}\\n\${orderData.paymentCode}\`, inline: false },
+                    { name: "Artikel", value: itemsList || "Keine Artikel?", inline: false },
+                    { name: "Gesamt", value: \`\${orderData.total}€\`, inline: true },
+                    { name: "Support", value: orderData.supportContact || "-", inline: true }
+                ]
+            }]
+        };
+        try{
+            await fetch(webhook,{
+                method:"POST",
+                headers:{"Content-Type":"application/json"},
+                body:JSON.stringify(payload)
+            });
+        }catch(err){console.error("Discord Webhook Fehler:",err);}
+    }
+
+    function showSuccessModal(orderData){
+        document.getElementById("order-number").textContent = orderData.orderNumber;
+        document.getElementById("success-minecraft-name").textContent = orderData.minecraftName;
+        document.getElementById("success-discord-name").textContent = orderData.discordName;
+        document.getElementById("success-country").textContent = orderData.country;
+        document.getElementById("success-payment-method").textContent = orderData.paymentMethod;
+        document.getElementById("success-payment-code").textContent = orderData.paymentCode;
+        document.getElementById("success-order-time").textContent = orderData.orderTime;
+        document.getElementById("success-total-price").textContent = orderData.total + "€";
+        document.getElementById("support-discord-name").textContent = orderData.supportContact || "SIGMA";
+        const itemsList = document.getElementById("success-items-list");
+        itemsList.innerHTML = "<ul>" + orderData.items.map(i =>
+            `<li>${i.name} x${i.quantity} – ${(i.price*i.quantity).toFixed(2)}€</li>`
+        ).join("") + "</ul>";
+        showModal(successModal);
+    }
+
+    function initSummerSaleCountdown(){
+        const cfg = shopData.shop.summerSale;
+        if(!cfg||!cfg.enabled||!cfg.countdownEnd)return;
+        const el = document.getElementById("hero-sale-countdown");
+        if(!el)return;
+        function update(){
+            const target = new Date(cfg.countdownEnd).getTime();
+            const now = Date.now();
+            const diff = target - now;
+            if(diff<=0){
+                el.textContent = "Aktion beendet";
+                clearInterval(countdownInterval);
+                return;
+            }
+            const d = Math.floor(diff/(1000*60*60*24));
+            const h = Math.floor((diff/(1000*60*60))%24);
+            el.textContent = `Endet in ${d}d ${h}h`;
+        }
+        update();
+        countdownInterval = setInterval(update,60*1000);
+    }
+
+    function showModal(m){m.style.display="block";}
+    function hideModal(m){m.style.display="none";}
+    function generateOrderNumber(){
+        const rand = Math.floor(Math.random()*10000).toString().padStart(4,"0");
+        return "ARC-" + Date.now().toString().slice(-6) + "-" + rand;
+    }
+
+    function attachEvents(){
+        document.querySelectorAll(".nav-link[data-category]").forEach(link=>{
+            link.addEventListener("click",e=>{
+                e.preventDefault();displayProducts(link.dataset.category);
+            });
+        });
+        document.querySelectorAll(".filter-btn").forEach(btn=>{
+            btn.addEventListener("click",()=>{
+                document.querySelectorAll(".filter-btn").forEach(b=>b.classList.remove("active"));
+                btn.classList.add("active");
+                displayProducts(btn.dataset.filter);
+            });
+        });
+        document.getElementById("hero-crates-btn").addEventListener("click",()=>{
+            displayProducts("crates");setActiveFilter("crates");
+        });
+        document.getElementById("hero-ranks-btn").addEventListener("click",()=>{
+            displayProducts("ranks");setActiveFilter("ranks");
+        });
+        document.getElementById("featured-cta").addEventListener("click",()=>{
+            displayProducts("crates");setActiveFilter("crates");
+        });
+        document.getElementById("cart-btn").addEventListener("click",e=>{
+            e.preventDefault();openCartModal();
+        });
+        document.querySelectorAll(".modal .close").forEach(btn=>{
+            btn.addEventListener("click",()=>hideModal(btn.closest(".modal")));
+        });
+        window.addEventListener("click",e=>{
+            if(e.target.classList.contains("modal"))hideModal(e.target);
+        });
+        document.getElementById("decrease-qty").addEventListener("click",()=>{
+            const input = document.getElementById("quantity");
+            const v = parseInt(input.value)||1;if(v>1)input.value=v-1;
+        });
+        document.getElementById("increase-qty").addEventListener("click",()=>{
+            const input = document.getElementById("quantity");
+            const v = parseInt(input.value)||1;if(v<99)input.value=v+1;
+        });
+        document.getElementById("add-to-cart-btn").addEventListener("click",addToCart);
+        document.getElementById("checkout-btn").addEventListener("click",openCheckoutModal);
+        document.getElementById("theme-toggle").addEventListener("click",toggleTheme);
+        document.getElementById("payment-method").addEventListener("change",e=>{
+            const val = e.target.value;
+            const hint = document.getElementById("paypal-hint");
+            const container = document.getElementById("paypal-button-container");
+            const completeBtn = document.getElementById("complete-order-btn");
+            const codeInput = document.getElementById("payment-code");
+            const codeGroup = document.getElementById("payment-code-group");
+            if(val==="paypal"){
+                hint.classList.remove("hidden");
+                container.classList.remove("hidden");
+                completeBtn.classList.add("hidden");
+                codeInput.placeholder="PayPal Referenz (optional)";
+                codeGroup.classList.remove("hidden");
+                setupPaypalButtons();
+            }else if(val){
+                hint.classList.add("hidden");
+                container.classList.add("hidden");
+                completeBtn.classList.remove("hidden");
+                codeInput.placeholder="Gift Card Code eingeben";
+                codeGroup.classList.remove("hidden");
+            }else{
+                hint.classList.add("hidden");
+                container.classList.add("hidden");
+                completeBtn.classList.remove("hidden");
+            }
+        });
+        document.getElementById("complete-order-btn").addEventListener("click",()=>{
+            const method = document.getElementById("payment-method").value;
+            if(method==="paypal"){
+                showNotification("Info","Bitte PayPal-Button verwenden.","info");
+                return;
+            }
+            completeOrder(null);
+        });
+    }
+    function setActiveFilter(filter){
+        document.querySelectorAll(".filter-btn").forEach(b=>{
+            b.classList.toggle("active",b.dataset.filter===filter);
+        });
+    }
+</script>
+</body>
+</html>
