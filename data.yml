@@ -1,0 +1,150 @@
+shop:
+  name: "ArcadeSMP Store"
+  # Eigene Discord-Webhook-URL eintragen oder so lassen:
+  discord_webhook: "YOUR_DISCORD_WEBHOOK_URL_HERE"
+  support_discord: "SIGMA"
+  summer_sale:
+    enabled: true
+    title: "SUMMER SALE"
+    subtitle: "Bis zu 50% Rabatt!"
+    image: "images/summersale.png"
+    countdown_end: "2025-09-15T23:59:59Z"
+    show_on_load: true
+
+featured:
+  type: "crate"
+  id: "ultra_crate"
+  title: "Featured Crate"
+  description: "Chance auf seltene Items, OP Gear und exklusive Belohnungen."
+  cta_text: "Crates ansehen"
+
+crates:
+  - id: "rare_crate"
+    name: "SIGMA SIGMA"
+    price: 1.99
+    image: "images/image.png"
+    description: "Contains rare items and rewards"
+
+  - id: "nitro_crate"
+    name: "Nitro Crate"
+    price: 2.99
+    image: "images/image2.png"
+    description: "Explosive rewards await you"
+
+  - id: "spawner_crate"
+    name: "Spawner Crate"
+    price: 4.99
+    image: "images/image3.png"
+    description: "Get powerful spawners for your farm"
+
+  - id: "arcade_crate"
+    name: "Arcade Crate"
+    price: 6.99
+    image: "images/image4.png"
+    description: "The ultimate arcade experience"
+
+  - id: "ultra_crate"
+    name: "Ultra Crate"
+    price: 9.99
+    image: ""   # kein Bild -> Overlay
+    description: "The rarest and most valuable items"
+
+ranks:
+  - id: "premium"
+    name: "Premium"
+    price: 1.99
+    image: "images/image.png"
+    description: "Basic premium benefits"
+    features:
+      - "Colored Chat"
+      - "Kit Premium"
+      - "2 Homes"
+
+  - id: "premium_plus"
+    name: "Premium+"
+    price: 3.99
+    image: "images/image6.png"
+    description: "Advanced premium features"
+    features:
+      - "All Premium Benefits"
+      - "Kit Premium+"
+      - "5 Homes"
+      - "Fly in Spawn"
+
+  - id: "premium_plus_plus"
+    name: "Premium++"
+    price: 5.99
+    image: "images/image7.png"
+    description: "Maximum premium experience"
+    features:
+      - "All Premium+ Benefits"
+      - "Kit Premium++"
+      - "10 Homes"
+      - "Workbench Command"
+
+  - id: "arcade_rank"
+    name: "Arcade Rank"
+    price: 7.99
+    image: "images/image8.png"
+    description: "The ultimate ArcadeSMP rank"
+    features:
+      - "All Premium++ Benefits"
+      - "Kit Arcade"
+      - "Unlimited Homes"
+      - "Enderchest Command"
+      - "Nickname Command"
+
+tools:
+  - id: "drill"
+    name: "Drill"
+    price: 5.99
+    image: "images/image10.png"
+    description: "Powerful mining drill tool"
+
+  - id: "sell_axe"
+    name: "Sell Axe"
+    price: 7.99
+    image: ""
+    description: "Special axe for selling items"
+
+  - id: "tree_chopper"
+    name: "Tree Chopper"
+    price: 3.99
+    image: "images/image12.png"
+    description: "Efficient tree chopping tool"
+
+coins:
+  - id: "coins_100"
+    name: "100 Coins"
+    price: 0.99
+    image: "images/image.png"
+    description: "Small coin package for beginners"
+    amount: 100
+
+  - id: "coins_500"
+    name: "500 Coins"
+    price: 4.99
+    image: "images/image2.png"
+    description: "Popular coin package"
+    amount: 500
+
+  - id: "coins_1000"
+    name: "1000 Coins"
+    price: 9.99
+    image: "images/image3.png"
+    description: "Great value coin package"
+    amount: 1000
+
+  - id: "coins_2500"
+    name: "2500 Coins"
+    price: 19.99
+    image: "images/image4.png"
+    description: "Large coin package for serious players"
+    amount: 2500
+
+  - id: "coins_5000"
+    name: "5000 Coins"
+    price: 39.99
+    image: ""
+    description: "Ultimate coin package"
+    amount: 5000
